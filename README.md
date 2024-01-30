@@ -13,6 +13,9 @@ Currently supports:
 **Prompts**:
 - CoT / PAL / [ToRA](https://github.com/microsoft/ToRA)
 
+> This suite has been adopted in projects such as [ToRA](https://github.com/microsoft/ToRA) (ICLR'24) and [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder/tree/main/Evaluation/PAL-Math). Here, we incrementally optimize the eval code and package it for future reuse.
+
+
 ## 🚀 Usage
 
 ### ⚙️ Enviorment Setup

@@ -1,0 +1,16 @@
+# common
+tqdm
+datasets
+torch
+transformers
+python_dateutil
+
+# vllm: https://github.com/vllm-project/vllm
+
+# math_eval
+sympy==1.12
+antlr4-python3-runtime==4.11.1 # ! The version needs to be compatible with sympy.
+word2number
+Pebble
+timeout-decorator
+git+https://github.com/ZubinGou/latex2sympy.git

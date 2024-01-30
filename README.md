@@ -18,7 +18,7 @@ Currently supports:
 
 ## 🚀 Usage
 
-### ⚙️ Enviorment Setup
+### ⚙️ Environment Setup
 
 #### Option 1: Conda
 
@@ -69,8 +69,4 @@ This project is still under active development. We welcome any contributions, in
 
 - https://github.com/microsoft/ToRA
 - https://github.com/openai/prm800k
-
-
-<!-- ## Cite -->
-
 

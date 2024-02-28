@@ -1,25 +1,26 @@
 # LLM Math Evaluation Harness
 
-A simple toolkit to benchmark LLMs on various math tasks 🧮✨.
+A unified, precise, and extensible toolkit to benchmark LLMs on various mathematical tasks 🧮✨.
 
-Currently supports:
+> 🔴🚀 **Important Notice**: We've identified variances above 5% in results from diverse math evaluation frameworks. To ensure fair and standardized comparisons across research, our toolkit strives to harmonize evaluation methods, promoting consistent and reliable math evaluation.
 
-**Models**:
-- All HF 🤗 and [vLLM](https://github.com/vllm-project/vllm) supported models
+> 🌟 **In Practice**: Esteemed projects like [ToRA](https://github.com/microsoft/ToRA) (ICLR'24) and [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder/tree/main/Evaluation/PAL-Math) have leveraged this suite!
 
-**Datasets**:
-- math,gsm8k,gsm-hard,svamp,asdiv,mawps,tabmwp,finqa,theorem-qa,bbh,hungarian_exam
+### Features:
 
-**Prompts**:
-- CoT / PAL / [Tool-Integrated Reasoning (ToRA)](https://github.com/microsoft/ToRA)
+- **Models**: Seamless compatibility with models from Hugging Face 🤗 and [vLLM](https://github.com/vllm-project/vllm).
 
-> This suite has been adopted in projects such as [ToRA](https://github.com/microsoft/ToRA) (ICLR'24) and [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder/tree/main/Evaluation/PAL-Math). Here, we incrementally optimize the eval code and package it for future reuse.
+- **Datasets**: An extensive array of datasets including `math`, `gsm8k`, `gsm-hard`, `svamp`, `asdiv`, `mawps`, `tabmwp`, `finqa`, `theorem-qa`, `bbh`, `hungarian_exam`.
 
-**TODO**:
-- [ ] Add support to MIT-OCW, MMLU-STEM, MMLU-MATH
+- **Prompts**: Diverse prompting paradigms, from Direct to Chain-of-Thought (CoT), Program-of-Thought (PoT/PAL), and [Tool-Integrated Reasoning (ToRA)](https://github.com/microsoft/ToRA).
 
 
-## 🚀 Usage
+- **Coming**:
+
+    - [ ] Add support to MIT-OCW, MMLU-STEM, MMLU-MATH
+
+
+## 🚀 Getting Started
 
 ### ⚙️ Environment Setup
 
@@ -54,7 +55,7 @@ cd math-evaluation-harness
 pip install -r requirements.txt
 ```
 
-### 🚀 Evaluation Instructions
+### ⚖️ Evaluation
 
 1. Configure model and data settings in `scripts/run_math_eval.sh`, and set the `PROMPT_TYPE` variable accordingly:
    - For base models, choose from: `direct`, `cot`, `pal`, or `tool-integrated`.
@@ -69,19 +70,20 @@ bash scripts/run_math_eval.sh
 
 ## 📊 Results
 
-### Base Models 
+### Base Models (CoT)
 
-| Size     | Model               | gsm8k | math-oai | svamp | asdiv | mawps |  avg  |
+| Size     | Model               | GSM8k | MATH-OAI | SWAMP | ASDiv | MAWPS |  AVG |
 |----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|
 | **1B**   | TinyLlama-1b-3T     |  3.0  |    3.0   | 11.3  | 18.2  | 20.1  | 11.1  |
 | **7B**   | Llama-7b            | 13.6  |    4.6   | 38.1  | 52.3  | 63.1  | 34.3  |
 |          | CodeLlama-7b        | 12.7  |    6.2   | 43.1  | 49.5  | 64.5  | 35.2  |
-|          | LLemma-7b           | 39.2  |   17.6   | 56.3  | 69.6  | 83.0  | 53.1  |
+|          | LLemma-7b           | 39.2  |   17.8   | 56.4  | 69.7  | 83.1  | 53.3  |
 |          | Mistral-7b          | 42.5  |   14.8   | 64.9  | 69.3  | 87.0  | 55.7  |
+|          | DeepSeek-Math-7B    | 63.2  |   30.6   | 73.2  | 83.4  | 92.3  | 68.5  |
 
-### SFT Models
+### SFT Models (CoT)
 
-| Size     | Model               | gsm8k | math-oai | svamp | asdiv | mawps |  avg  |
+| Size     | Model               | GSM8k | MATH-OAI | SWAMP | ASDiv | MAWPS |  AVG |
 |----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|
 | **7B**   | DeepSeek-Math-RL    | 88.4  |   48.6   | 87.3  | 91.7  | 94.8  | 82.2  | 
  

@@ -87,7 +87,7 @@ def setup(args):
     # load model
     available_gpus = os.environ['CUDA_VISIBLE_DEVICES'].split(',')
     if args.use_vllm:
-        llm = LLM(model=args.model_name_or_path, tensor_parallel_size=len(available_gpus))
+        llm = LLM(model=args.model_name_or_path, tensor_parallel_size=len(available_gpus), trust_remote_code=True)
         tokenizer = None
     else:
         llm, tokenizer =  load_hf_lm_and_tokenizer(

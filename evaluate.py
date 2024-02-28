@@ -107,7 +107,7 @@ def evaluate(data_name, prompt_type, samples: list=None, file_path: str=None, ma
         result_json['type_acc'] = type_scores
 
     print(result_json)
-    return result_json
+    return samples, result_json
 
 
 def parse_args():

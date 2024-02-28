@@ -2,12 +2,13 @@ set -ex
 
 # MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/mistral/Mistral-7B-v0.1
 # MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/llemma/llemma_7b
-MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/internlm/internlm2-math-base-7b
-# MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-rl
+# MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/internlm/internlm2-math-base-7b
 # MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-base
+# MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-rl
+MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-instruct
 
-PROMPT_TYPE="cot" # for base models: direct / cot / pal / tool-integrated
-# PROMPT_TYPE="deepseek-math" # for sft models: tora / wizard_zs / deepseek-math
+# PROMPT_TYPE="cot" # for base models: direct / cot / pal / tool-integrated
+PROMPT_TYPE="deepseek-math" # for sft models: tora / wizard_zs / deepseek-math
 
 
 OUTPUT_DIR=${MODEL_NAME_OR_PATH}/math_eval

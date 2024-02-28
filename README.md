@@ -72,20 +72,24 @@ bash scripts/run_math_eval.sh
 
 ### Base Models (CoT)
 
-| Size     | Model               | GSM8k | MATH-OAI | SWAMP | ASDiv | MAWPS |  AVG |
-|----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|
-| **1B**   | TinyLlama-1b-3T     |  3.0  |    3.0   | 11.3  | 18.2  | 20.1  | 11.1  |
-| **7B**   | Llama-7b            | 13.6  |    4.6   | 38.1  | 52.3  | 63.1  | 34.3  |
-|          | CodeLlama-7b        | 12.7  |    6.2   | 43.1  | 49.5  | 64.5  | 35.2  |
-|          | LLemma-7b           | 39.2  |   17.8   | 56.4  | 69.7  | 83.1  | 53.3  |
-|          | Mistral-7b          | 42.5  |   14.8   | 64.9  | 69.3  | 87.0  | 55.7  |
-|          | DeepSeek-Math-7B    | 63.2  |   30.6   | 73.2  | 83.4  | 92.3  | 68.5  |
+| Size     | Model                  | GSM8k | MATH-OAI | SWAMP | ASDiv | MAWPS |  AVG |
+|----------|------------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|
+| **1B**   | TinyLlama-1b-3T        |  3.0  |    3.0   | 11.3  | 18.2  | 20.1  | 11.1  |
+| **7B**   | Llama-7b               | 13.6  |    4.6   | 38.1  | 52.3  | 63.1  | 34.3  |
+|          | CodeLlama-7b           | 12.7  |    6.2   | 43.1  | 49.5  | 64.5  | 35.2  |
+|          | LLemma-7b              | 39.2  |   17.8   | 56.4  | 69.7  | 83.1  | 53.3  |
+|          | Mistral-7b             | 42.5  |   14.8   | 64.9  | 69.3  | 87.0  | 55.7  |
+|          | InternLM2-Math-Base-7B* | 42.8  |   16.2   | 59.0  | 67.5  | 83.9  | 53.9  |
+|          | DeepSeek-Math-7B-Base  | 63.2  |   30.6   | 73.2  | 83.4  | 92.3  | 68.5  |
 
 ### SFT Models (CoT)
 
-| Size     | Model               | GSM8k | MATH-OAI | SWAMP | ASDiv | MAWPS |  AVG |
-|----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|
-| **7B**   | DeepSeek-Math-RL    | 88.4  |   48.6   | 87.3  | 91.7  | 94.8  | 82.2  | 
+| Size     | Model                  | GSM8k | MATH-OAI | SWAMP | ASDiv | MAWPS |  AVG |
+|----------|------------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|
+| **7B**   | DeepSeek-Math-Instruct* | 72.8  |   36.6   | 72.9  | 85.9  | 93.5  | 72.3  |
+|          | DeepSeek-Math-RL       | 88.4  |   48.6   | 87.3  | 91.7  | 94.8  | 82.2  | 
+
+***Note**: The results of `InternLM2-Math-Base-7B` and `DeepSeek-Math-Instruct` may have some bugs. We are working on fixing them.
  
 
 ## 🍀 Contributing

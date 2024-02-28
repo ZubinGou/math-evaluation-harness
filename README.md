@@ -15,6 +15,11 @@ Currently supports:
 
 > This suite has been adopted in projects such as [ToRA](https://github.com/microsoft/ToRA) (ICLR'24) and [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder/tree/main/Evaluation/PAL-Math). Here, we incrementally optimize the eval code and package it for future reuse.
 
+<- below is TODO list ->
+
+**TODO**:
+- [ ] Add support to MIT-OCW, MMLU-STEM, MMLU-MATH
+
 
 ## 🚀 Usage
 
@@ -58,6 +63,18 @@ bash scritpts/run_math_eval.sh
 ```
 
 Enjoy 🍻!
+
+
+## 📊 Results
+
+  
+| Size     | Model               | gsm8k | math-oai | svamp | asdiv | mawps |  avg  |  
+|----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|  
+| **1B**   | TinyLlama-1b-3T     |  3.00 |    3.00  | 11.30 | 18.20 | 20.10 | 11.12 |  
+| **7B**   | Llama-7b            | 13.60 |    4.60  | 38.10 | 52.30 | 63.10 | 34.34 |  
+|          | CodeLlama-7b        | 12.70 |    6.20  | 43.10 | 49.50 | 64.50 | 35.20 |  
+|          | LLemma-7b           | 39.20 |   17.60  | 56.30 | 69.60 | 83.00 | 53.14 |  
+|          | Mistral-7b          | 42.50 |   14.80  | 64.90 | 69.30 | 87.00 | 55.70 |  
 
 
 ## 🍀 Contributing

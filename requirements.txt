@@ -1,11 +1,11 @@
+
 # common
+vllm
 tqdm
 datasets
 torch
 transformers
 python_dateutil
-
-# vllm: https://github.com/vllm-project/vllm
 
 # math_eval
 sympy==1.12

@@ -92,6 +92,12 @@ def construct_prompt(example, data_name, args):
             "### Instruction:\n{instruction}\n\n### Response:\n"
         )
         full_prompt = full_prompt.format(instruction=demo_prompt + f"Question: {example['question']}\nAnswer:")
+    elif args.prompt_type == "deepseek-math":
+        full_prompt = (
+            "User: {instruction}\nPlease reason step by step, and put your final answer within \\boxed\{\}.\n\n"
+            "Assistant: "
+        )
+        full_prompt = full_prompt.format(instruction=example['question'])
     else:
         raise NotImplementedError(args.prompt_type)
     return full_prompt

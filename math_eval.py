@@ -265,10 +265,11 @@ def main(llm, tokenizer, data_name, args):
 
     # add processed samples
     all_samples.extend(processed_samples)
+    all_samples, result_json = evaluate(samples=all_samples, data_name=data_name, prompt_type=args.prompt_type, execute=True)
+
+    # save outputs
     if len(processed_samples) < len(all_samples) and args.save_outputs:
         save_jsonl(all_samples, out_file)
-
-    all_samples, result_json = evaluate(samples=all_samples, data_name=data_name, prompt_type=args.prompt_type, execute=True)
     
     result_json['time_use_in_second'] = time_use
     result_json['time_use_in_minite'] = f"{int(time_use // 60)}:{int(time_use % 60):02d}"

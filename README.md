@@ -11,7 +11,7 @@ Currently supports:
 - math,gsm8k,gsm-hard,svamp,asdiv,mawps,tabmwp,finqa,theorem-qa,bbh,hungarian_exam
 
 **Prompts**:
-- CoT / PAL / [ToRA](https://github.com/microsoft/ToRA)
+- CoT / PAL / [Tool-Integrated Reasoning (ToRA)](https://github.com/microsoft/ToRA)
 
 > This suite has been adopted in projects such as [ToRA](https://github.com/microsoft/ToRA) (ICLR'24) and [DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder/tree/main/Evaluation/PAL-Math). Here, we incrementally optimize the eval code and package it for future reuse.
 
@@ -67,14 +67,28 @@ Enjoy 🍻!
 
 ## 📊 Results
 
+### Base Models 
+
+| Size     | Model               | gsm8k | math-oai | svamp | asdiv | mawps |  avg  |  
+|----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|  
+| **1B**   | TinyLlama-1b-3T     |  3.0  |    3.0   | 11.3  | 18.2  | 20.1  | 11.1  |  
+| **7B**   | Llama-7b            | 13.6  |    4.6   | 38.1  | 52.3  | 63.1  | 34.3  |  
+|          | CodeLlama-7b        | 12.7  |    6.2   | 43.1  | 49.5  | 64.5  | 35.2  |  
+|          | LLemma-7b           | 39.2  |   17.6   | 56.3  | 69.6  | 83.0  | 53.1  |  
+|          | Mistral-7b          | 42.5  |   14.8   | 64.9  | 69.3  | 87.0  | 55.7  |  
+  
+### SFT Models  
   
 | Size     | Model               | gsm8k | math-oai | svamp | asdiv | mawps |  avg  |  
 |----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|  
-| **1B**   | TinyLlama-1b-3T     |  3.00 |    3.00  | 11.30 | 18.20 | 20.10 | 11.12 |  
-| **7B**   | Llama-7b            | 13.60 |    4.60  | 38.10 | 52.30 | 63.10 | 34.34 |  
-|          | CodeLlama-7b        | 12.70 |    6.20  | 43.10 | 49.50 | 64.50 | 35.20 |  
-|          | LLemma-7b           | 39.20 |   17.60  | 56.30 | 69.60 | 83.00 | 53.14 |  
-|          | Mistral-7b          | 42.50 |   14.80  | 64.90 | 69.30 | 87.00 | 55.70 |  
+| **7B**   | DeepSeek-Math-RL    | 88.4  |   48.6   | 87.3  | 91.7  | 94.8  | 82.2  | 
+ 
+
+### SFT Models
+
+| Size     | Model               | gsm8k | math-oai | svamp | asdiv | mawps |  avg  |  
+|----------|---------------------|:-----:|:--------:|:-----:|:-----:|:-----:|:-----:|  
+| **7B**   | DeepSeek-Math-RL    | 88.40 | 48.60    | 87.30 | 91.70 | 94.80 | 82.2  |
 
 
 ## 🍀 Contributing

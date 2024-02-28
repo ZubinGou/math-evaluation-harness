@@ -113,7 +113,7 @@ def evaluate(data_name, prompt_type, samples: list=None, file_path: str=None, ma
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_name", type=str, default="math")
-    parser.add_argument("--prompt_type", type=str, default="tora")
+    parser.add_argument("--prompt_type", type=str, default="tool-integrated")
     parser.add_argument("--file_path", type=str, default=None, required=True)
     parser.add_argument("--max_num_samples", type=int, default=None)
     parser.add_argument("--execute", action="store_true")

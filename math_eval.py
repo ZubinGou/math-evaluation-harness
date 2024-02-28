@@ -24,7 +24,7 @@ def parse_args():
     parser.add_argument("--data_dir", default="./data", type=str)
     parser.add_argument("--model_name_or_path", default="gpt-4", type=str)
     parser.add_argument("--output_dir", default="./output", type=str)
-    parser.add_argument("--prompt_type", default="tora", type=str)
+    parser.add_argument("--prompt_type", default="tool-integrated", type=str)
     parser.add_argument("--split", default="test", type=str)
     parser.add_argument("--num_test_sample", default=-1, type=int) # -1 for full data
     parser.add_argument("--seed", default=0, type=int)
@@ -35,7 +35,6 @@ def parse_args():
     parser.add_argument("--top_p", default=1, type=float)
     parser.add_argument("--max_tokens_per_call", default=1024, type=int)
     parser.add_argument("--shuffle", action="store_true")
-    parser.add_argument("--use_train_prompt_format", action="store_true")
     parser.add_argument("--use_vllm", action="store_true")
     parser.add_argument("--save_outputs", action="store_true")
     parser.add_argument("--not_save_metrics", action="store_true")
@@ -113,7 +112,7 @@ def setup(args):
     # print all results
     pad = max([len(data_name) for data_name in data_list])
     print("\t".join(data_name.ljust(pad, " ") for data_name in data_list))
-    print("\t".join([f"{result['acc']:.2f}".ljust(pad, " ") for result in results]))
+    print("\t".join([f"{result['acc']:.1f}".ljust(pad, " ") for result in results]))
 
 
 def main(llm, tokenizer, data_name, args):
@@ -138,6 +137,9 @@ def main(llm, tokenizer, data_name, args):
         gt_cot, gt_ans = parse_ground_truth(example, data_name)
         full_prompt = construct_prompt(example, data_name, args)
 
+        if idx == args.start:
+            print(full_prompt)
+
         sample = {'idx': idx, 'question': example['question'], 'gt_cot': gt_cot, 'gt': gt_ans, 'prompt': full_prompt}
 
         # add remain fields
@@ -149,7 +151,8 @@ def main(llm, tokenizer, data_name, args):
 
 
     # repeat n times
-    remain_prompts = [sample['prompt'] for sample in samples for _ in range(args.n_sampling)]
+    input_prompts = [sample['prompt'] for sample in samples for _ in range(args.n_sampling)]
+    remain_prompts = input_prompts
     remain_prompts = [(i, prompt) for i, prompt in enumerate(remain_prompts)]
     end_prompts = []
 
@@ -235,8 +238,14 @@ def main(llm, tokenizer, data_name, args):
     end_prompts.extend(remain_prompts)
     # sort by idx
     end_prompts = sorted(end_prompts, key=lambda x: x[0])
-    ans_split = "<|assistant|>" if args.use_train_prompt_format else "Question:"
-    codes = [prompt.split(ans_split)[-1].strip() for _, prompt in end_prompts]
+
+    # remove input_prompt from end_prompt
+    codes = []
+    assert len(input_prompts) == len(end_prompts)
+    for i in range(len(input_prompts)):
+        _, end_prompt = end_prompts[i]
+        code = end_prompt.split(input_prompts[i])[-1].strip()
+        codes.append(code)
 
     # extract preds
     results = [run_execute(executor, code, args.prompt_type) for code in codes]

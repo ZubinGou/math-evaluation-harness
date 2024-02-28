@@ -52,24 +52,29 @@ def load_prompt(data_name, prompt_type):
         data_name = "gsm8k"
     if data_name in ['math-oai', "hungarian_exam"]:
         data_name = "math"
-    if prompt_type in ['platypus_fs', 'wizard_zs']:
+    if prompt_type in ['platypus_fs']:
         prompt_type = "cot"
-    prompt_path = "./prompts/{}/{}.md".format(prompt_type, data_name)
-    if not os.path.exists(prompt_path):
-        prompt_path = "./prompts/{}.md".format(prompt_type)
-    if os.path.exists(prompt_path):
-        with open(prompt_path, 'r', encoding='utf-8') as fp:
-            prompt = fp.read().strip() + "\n\n"
+    if prompt_type in ['tool-integrated']:
+        prompt_type = "tora"
+
+    if prompt_type in ['cot', 'pal', 'tora']:
+        prompt_path = "./prompts/{}/{}.md".format(prompt_type, data_name)
+        if not os.path.exists(prompt_path):
+            prompt_path = "./prompts/{}.md".format(prompt_type)
+        if os.path.exists(prompt_path):
+            with open(prompt_path, 'r', encoding='utf-8') as fp:
+                prompt = fp.read().strip() + "\n\n"
+        else:
+            print(f"Error: prompt file {prompt_path} not found")
+            prompt = ""
     else:
-        print(f"Error: prompt file {prompt_path} not found")
         prompt = ""
     return prompt
 
 def construct_prompt(example, data_name, args):
     demo_prompt = load_prompt(data_name, args.prompt_type)
-    if args.use_train_prompt_format:
-        full_prompt = f"<|user|>\n{example['question']}\n<|assistant|>\n"
-    elif "tora" in args.prompt_type:
+    # Base models
+    if args.prompt_type in ['tool-integreted']:
         context = f"Question: {example['question']}\n\nSolution:"
         full_prompt = demo_prompt + context
     elif args.prompt_type in ["direct", "cot"]:
@@ -78,6 +83,9 @@ def construct_prompt(example, data_name, args):
     elif args.prompt_type == "pal":
         context = f"Question: {example['question']}"
         full_prompt = demo_prompt + context
+    # SFT models
+    elif args.prompt_type in ['self-instruct', 'tora']:
+        full_prompt = f"<|user|>\n{example['question']}\n<|assistant|>\n"
     elif args.prompt_type == "wizard_zs":
         full_prompt = (
             "Below is an instruction that describes a task. "
@@ -94,8 +102,8 @@ def construct_prompt(example, data_name, args):
         full_prompt = full_prompt.format(instruction=demo_prompt + f"Question: {example['question']}\nAnswer:")
     elif args.prompt_type == "deepseek-math":
         full_prompt = (
-            "User: {instruction}\nPlease reason step by step, and put your final answer within \\boxed\{\}.\n\n"
-            "Assistant: "
+            "User: {instruction}\nPlease reason step by step, "
+            "and put your final answer within \\boxed{{}}.\n\nAssistant: "
         )
         full_prompt = full_prompt.format(instruction=example['question'])
     else:

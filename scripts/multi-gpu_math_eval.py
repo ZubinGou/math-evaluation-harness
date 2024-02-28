@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument("--data_names", default="gsm8k,math-oai,math,gsm-hard,svamp,tabmwp,asdiv,mawps", type=str)
     parser.add_argument("--model_name_or_path", default="gpt-4", type=str)
     parser.add_argument("--output_dir", default="/mnt/project/tora/outputs", type=str)
-    parser.add_argument("--prompt_type", default="tora", type=str, choices=["tora", "program_only", "pal", "cot", "wizard_zs", "platypus_fs"])
+    parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["tool-integrated", "tora", "program_only", "pal", "cot", "wizard_zs", "platypus_fs"])
     parser.add_argument("--split", default="test", type=str)
     parser.add_argument("--num_test_sample", default=-1, type=int) # -1 for full data_name
     parser.add_argument("--seed", default=0, type=int)
@@ -23,7 +23,6 @@ def parse_args():
     parser.add_argument("--temperature", default=0, type=float)
     parser.add_argument("--n_sampling", default=1, type=int)
     parser.add_argument("--top_p", default=1, type=float)
-    parser.add_argument("--use_train_prompt_format", action="store_true")
     parser.add_argument("--gpus_per_model", default=1, type=int) # 2 for 70b
     parser.add_argument("--available_gpus", default=None, type=str)
     parser.add_argument("--split_data_over_gpus", action="store_true")
@@ -81,8 +80,6 @@ for i, data_name in enumerate(data_list):
         f"--end {end} " \
         f"--output_dir {args.output_dir} " \
 
-    if args.use_train_prompt_format:
-        cmd += "--use_train_prompt_format "
     if args.use_vllm:
         cmd += "--use_vllm "
     if args.save_outputs:

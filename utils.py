@@ -103,7 +103,7 @@ def construct_prompt(example, data_name, args):
     elif args.prompt_type == "deepseek-math":
         full_prompt = (
             "User: {instruction}\nPlease reason step by step, "
-            "and put your final answer within \\boxed{{}}.\n\nAssistant: "
+            "and put your final answer within \\boxed{{}}.\n\nAssistant:"
         )
         full_prompt = full_prompt.format(instruction=example['question'])
     else:

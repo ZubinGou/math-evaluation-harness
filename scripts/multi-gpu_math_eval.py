@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument("--data_names", default="gsm8k,math-oai,math,gsm-hard,svamp,tabmwp,asdiv,mawps", type=str)
     parser.add_argument("--model_name_or_path", default="gpt-4", type=str)
     parser.add_argument("--output_dir", default="/mnt/project/tora/outputs", type=str)
+    # TODO: deal with program_only
     parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["tool-integrated", "tora", "program_only", "pal", "cot", "wizard_zs", "platypus_fs"])
     parser.add_argument("--split", default="test", type=str)
     parser.add_argument("--num_test_sample", default=-1, type=int) # -1 for full data_name
@@ -28,7 +29,6 @@ def parse_args():
     parser.add_argument("--split_data_over_gpus", action="store_true")
     parser.add_argument("--use_vllm", action="store_true")
     parser.add_argument("--save_outputs", action="store_true")
-    parser.add_argument("--not_save_metrics", action="store_true")
     parser.add_argument("--use_safetensors", action="store_true")
     args = parser.parse_args()
     return args
@@ -84,8 +84,6 @@ for i, data_name in enumerate(data_list):
         cmd += "--use_vllm "
     if args.save_outputs:
         cmd += "--save_outputs "
-    if args.not_save_metrics:
-        cmd += "--not_save_metrics "
     if args.use_safetensors:
         cmd += "--use_safetensors "
 

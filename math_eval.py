@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument("--shuffle", action="store_true")
     parser.add_argument("--use_vllm", action="store_true")
     parser.add_argument("--save_outputs", action="store_true")
-    parser.add_argument("--not_save_metrics", action="store_true")
+    parser.add_argument("--overide", action="store_true")
     parser.add_argument("--use_safetensors", action="store_true")
     args = parser.parse_args()
     args.top_p = 1 if args.temperature == 0 else args.top_p # top_p must be 1 when using greedy sampling (vllm)
@@ -68,10 +68,11 @@ def prepare_data(data_name, args):
     os.makedirs(f'{args.output_dir}/{data_name}', exist_ok=True)
 
     # load all processed samples
-    processed_files = [f for f in os.listdir(f"{args.output_dir}/{data_name}/") if f.endswith(".jsonl") and f.startswith(out_file_prefix)]    
     processed_samples = []
-    for f in processed_files:
-        processed_samples.extend(list(load_jsonl(f"{args.output_dir}/{data_name}/{f}")))
+    if not args.overide:
+        processed_files = [f for f in os.listdir(f"{args.output_dir}/{data_name}/") if f.endswith(".jsonl") and f.startswith(out_file_prefix)]    
+        for f in processed_files:
+            processed_samples.extend(list(load_jsonl(f"{args.output_dir}/{data_name}/{f}")))
 
     # dedepulicate
     processed_samples = {sample['idx']: sample for sample in processed_samples}
@@ -157,12 +158,16 @@ def main(llm, tokenizer, data_name, args):
     end_prompts = []
 
     max_func_call = 1 if args.prompt_type in ['cot', 'pal'] else 4
-    stop_tokens = ["</s>", "```output"]
+
+    # stop words TODO: make it more general
+    stop_words = ["</s>"]
 
     if args.prompt_type in ['cot']:
-        stop_tokens.append("\n\n")
+        stop_words.append("\n\nQuestion:")
+    if args.prompt_type in ['pal', 'tool-integrated']:
+        stop_words.append("\n\n---", "```output")
     elif args.prompt_type in ['wizard_zs', 'platypus_fs']:
-        stop_tokens.extend(["Instruction", "Response"])
+        stop_words.extend(["Instruction", "Response"])
 
     # start inference
     # measure time use
@@ -181,7 +186,7 @@ def main(llm, tokenizer, data_name, args):
                             top_p=args.top_p,
                             max_tokens=args.max_tokens_per_call,
                             n=1,
-                            stop=stop_tokens,
+                            stop=stop_words,
             ))
 
             outputs = sorted(outputs, key=lambda x: int(x.request_id)) # sort outputs by request_id
@@ -193,7 +198,7 @@ def main(llm, tokenizer, data_name, args):
                 prompts=prompts,
                 max_new_tokens=args.max_tokens_per_call,
                 batch_size=16,
-                stop_id_sequences=stop_tokens,
+                stop_id_sequences=stop_words,
             )
 
         assert len(outputs) == len(current_prompts)
@@ -274,9 +279,8 @@ def main(llm, tokenizer, data_name, args):
     result_json['time_use_in_second'] = time_use
     result_json['time_use_in_minite'] = f"{int(time_use // 60)}:{int(time_use % 60):02d}"
 
-    if not args.not_save_metrics:
-        with open(out_file.replace(".jsonl", f"_{args.prompt_type}_metrics.json"), "w") as f:
-            json.dump(result_json, f, indent=4)
+    with open(out_file.replace(".jsonl", f"_{args.prompt_type}_metrics.json"), "w") as f:
+        json.dump(result_json, f, indent=4)
     return result_json
 
 if __name__ == "__main__":

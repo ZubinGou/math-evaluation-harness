@@ -89,7 +89,7 @@ bash scripts/run_math_eval.sh
 | **7B**   | DeepSeek-Math-Instruct | 82.4  |   45.8   | 83.5  | 90.1  | 95.7  | 79.5  |
 |          | DeepSeek-Math-RL       | 88.3  |   50.0   | 87.2  | 92.0  | 95.5  | 82.6  |
 
-> * We suggest utilizing the `MATH-OAI` subset for evaluating MATH performance, since the original `MATH` test set has already been included in public datasets such as PRM800k.
+> *We suggest utilizing the `MATH-OAI` subset for evaluating MATH performance, since the original `MATH` test set has already been included in public training sets such as PRM800k.
 
 
 ## 🍀 Contributing

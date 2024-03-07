@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument("--shuffle", action="store_true")
     parser.add_argument("--use_vllm", action="store_true")
     parser.add_argument("--save_outputs", action="store_true")
-    parser.add_argument("--overide", action="store_true")
+    parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--use_safetensors", action="store_true")
     args = parser.parse_args()
     args.top_p = 1 if args.temperature == 0 else args.top_p # top_p must be 1 when using greedy sampling (vllm)
@@ -69,7 +69,7 @@ def prepare_data(data_name, args):
 
     # load all processed samples
     processed_samples = []
-    if not args.overide:
+    if not args.overwrite:
         processed_files = [f for f in os.listdir(f"{args.output_dir}/{data_name}/") if f.endswith(".jsonl") and f.startswith(out_file_prefix)]    
         for f in processed_files:
             processed_samples.extend(list(load_jsonl(f"{args.output_dir}/{data_name}/{f}")))

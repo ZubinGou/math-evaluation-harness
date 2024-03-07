@@ -74,15 +74,16 @@ def load_prompt(data_name, prompt_type):
 def construct_prompt(example, data_name, args):
     demo_prompt = load_prompt(data_name, args.prompt_type)
     # Base models
-    if args.prompt_type in ['tool-integreted']:
-        context = f"Question: {example['question']}\n\nSolution:"
-        full_prompt = demo_prompt + context
-    elif args.prompt_type in ["direct", "cot"]:
+    if args.prompt_type in ["direct", "cot"]:
         context = f"Question: {example['question']}\nAnswer:"
         full_prompt = demo_prompt + context
     elif args.prompt_type == "pal":
         context = f"Question: {example['question']}"
         full_prompt = demo_prompt + context
+    elif args.prompt_type in ['tool-integreted']:
+        context = f"Question: {example['question']}\n\nSolution:"
+        full_prompt = demo_prompt + context
+
     # SFT models
     elif args.prompt_type in ['self-instruct', 'tora']:
         full_prompt = f"<|user|>\n{example['question']}\n<|assistant|>\n"
@@ -104,6 +105,12 @@ def construct_prompt(example, data_name, args):
         full_prompt = (
             "User: {instruction}\nPlease reason step by step, "
             "and put your final answer within \\boxed{{}}.\n\nAssistant:"
+        )
+        full_prompt = full_prompt.format(instruction=example['question'])
+    elif args.prompt_type == "kpmath":
+        full_prompt = (
+            'User: Please reason step by step and put your final answer at the end '
+            'with "The answer is: ".\n\n{instruction}\n\nAssistant:'
         )
         full_prompt = full_prompt.format(instruction=example['question'])
     else:

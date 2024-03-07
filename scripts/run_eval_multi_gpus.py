@@ -11,11 +11,10 @@ from multiprocessing import Pool
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_names", default="gsm8k,math-oai,math,gsm-hard,svamp,tabmwp,asdiv,mawps", type=str)
     parser.add_argument("--model_name_or_path", default="gpt-4", type=str)
+    parser.add_argument("--data_names", default="gsm8k,math-oai,math,gsm-hard,svamp,tabmwp,asdiv,mawps", type=str)
     parser.add_argument("--output_dir", default="/mnt/project/tora/outputs", type=str)
-    # TODO: deal with program_only
-    parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["tool-integrated", "tora", "program_only", "pal", "cot", "wizard_zs", "platypus_fs"])
+    parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["direct", "cot", "pal", "tool-integrated", "self-instruct", "tora", "pal", "cot", "wizard_zs", "platypus_fs", "deepseek-math", "kpmath"])
     parser.add_argument("--split", default="test", type=str)
     parser.add_argument("--num_test_sample", default=-1, type=int) # -1 for full data_name
     parser.add_argument("--seed", default=0, type=int)
@@ -30,6 +29,7 @@ def parse_args():
     parser.add_argument("--use_vllm", action="store_true")
     parser.add_argument("--save_outputs", action="store_true")
     parser.add_argument("--use_safetensors", action="store_true")
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
     return args
 
@@ -66,9 +66,10 @@ for i, data_name in enumerate(data_list):
     start, end = start_end_list[i]
     cmd = f"sleep {gpu_idx * 3} && " \
         f"CUDA_VISIBLE_DEVICES={','.join(available_gpus[gpu_idx:gpu_idx+args.gpus_per_model])} TOKENIZERS_PARALLELISM=false "\
-        "python -m infer.inference " \
+        "python3 -u math_eval.py " \
         f"--model_name_or_path {args.model_name_or_path} " \
         f"--data_name {data_name} " \
+        f"--output_dir {args.output_dir} " \
         f"--split {args.split} " \
         f"--prompt_type {args.prompt_type} " \
         f"--num_test_sample {args.num_test_sample} " \
@@ -78,7 +79,6 @@ for i, data_name in enumerate(data_list):
         f"--top_p {args.top_p} " \
         f"--start {start} " \
         f"--end {end} " \
-        f"--output_dir {args.output_dir} " \
 
     if args.use_vllm:
         cmd += "--use_vllm "
@@ -86,6 +86,8 @@ for i, data_name in enumerate(data_list):
         cmd += "--save_outputs "
     if args.use_safetensors:
         cmd += "--use_safetensors "
+    if args.overwrite:
+        cmd += "--overwrite"
 
     # cmd += " & "
     # print(cmd)
@@ -112,11 +114,12 @@ if __name__ == "__main__":
 
 # Usage:
 # model_name_or_path=./mistral/Mistral-7B-v0.1
-# python ./scripts/run_infer_local.py \
+# python3 scripts/run_eval_multi_gpus.py \
 #     --model_name_or_path $model_name_or_path \
-#     --prompt_type "wizard_zs" \
+#     --prompt_type "cot" \
 #     --save_outputs \
-#     --available_gpus 0,1,4,5,6,7 \
-#     --data_names math-oai,gsm8k \
+#     --available_gpus 0,1,2,3 \
+#     --data_names gsm8k,math-oai,svamp,asdiv \
 #     --use_vllm \
 #     --gpus_per_model 1 \
+#     --overwrite

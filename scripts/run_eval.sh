@@ -1,5 +1,8 @@
 set -ex
 
+PROMPT_TYPE=$1
+MODEL_NAME_OR_PATH=$2
+
 # ======= Base Models =======
 # PROMPT_TYPE="cot" # direct / cot / pal / tool-integrated
 # MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/mistral/Mistral-7B-v0.1
@@ -9,8 +12,8 @@ set -ex
 
 
 # ======= SFT Models =======
-PROMPT_TYPE="deepseek-math" # tora / wizard_zs / deepseek-math
-MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-rl
+# PROMPT_TYPE="deepseek-math" # self-instruct / tora / wizard_zs / deepseek-math / kpmath
+# MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-rl
 # MODEL_NAME_OR_PATH=${HF_MODEL_DIR}/deepseek/deepseek-math-7b-instruct
 
 
@@ -37,4 +40,4 @@ python3 -u math_eval.py \
     --end -1 \
     --use_vllm \
     --save_outputs \
-    --overide \
+    --overwrite \

@@ -8,6 +8,7 @@ import subprocess
 import argparse
 from multiprocessing import Pool
 
+from summarize_results import summarize_results
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -110,6 +111,8 @@ if __name__ == "__main__":
     pool.map(run_process, scripts) 
 
     pool.close()
+
+    summarize_results(args.output_dir, args.data_names, args.split)
 
 
 # Usage:

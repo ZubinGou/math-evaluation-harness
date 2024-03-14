@@ -237,6 +237,8 @@ def extract_answer(pred_str):
         pred=a
     elif ('he answer is' in pred_str):
         pred = pred_str.split('he answer is')[-1].strip()
+    elif ('final answer is' in pred_str):
+        pred = pred_str.split('final answer is')[-1].strip()
     # elif extract_program_output(pred_str) != "":
         # fall back to program
         # pred = extract_program_output(pred_str)

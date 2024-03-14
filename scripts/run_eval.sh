@@ -40,4 +40,4 @@ python3 -u math_eval.py \
     --end -1 \
     --use_vllm \
     --save_outputs \
-    --overwrite \
+    # --overwrite \

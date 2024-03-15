@@ -87,6 +87,8 @@ def construct_prompt(example, data_name, args):
     # SFT models
     elif args.prompt_type in ['self-instruct', 'tora']:
         full_prompt = f"<|user|>\n{example['question']}\n<|assistant|>\n"
+    elif args.prompt_type in ['self-instruct-boxed']:
+        full_prompt = f"<|user|>\n{example['question']}\nEnclose the final answer using \\boxed{{}}.\n<|assistant|>\n"
     elif args.prompt_type == "wizard_zs":
         full_prompt = (
             "Below is an instruction that describes a task. "

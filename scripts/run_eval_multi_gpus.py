@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument("--model_name_or_path", default="gpt-4", type=str)
     parser.add_argument("--data_names", default="gsm8k,math-oai,math,gsm-hard,svamp,tabmwp,asdiv,mawps", type=str)
     parser.add_argument("--output_dir", default="/mnt/project/tora/outputs", type=str)
-    parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["direct", "cot", "pal", "tool-integrated", "self-instruct", "tora", "pal", "cot", "wizard_zs", "platypus_fs", "deepseek-math", "kpmath"])
+    parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["direct", "cot", "pal", "tool-integrated", "self-instruct", "self-instruct-boxed", "tora", "pal", "cot", "wizard_zs", "platypus_fs", "deepseek-math", "kpmath"])
     parser.add_argument("--split", default="test", type=str)
     parser.add_argument("--num_test_sample", default=-1, type=int) # -1 for full data_name
     parser.add_argument("--seed", default=0, type=int)

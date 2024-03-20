@@ -2,8 +2,11 @@
 This logic is largely copied from the Hendrycks' MATH release (math_equivalence), and borrowed from:
 - https://github.com/microsoft/ProphetNet/tree/master/CRITIC
 - https://github.com/openai/prm800k
+- https://github.com/microsoft/ToRA/blob/main/src/eval/grader.py
+- https://github.com/deepseek-ai/DeepSeek-Math/blob/main/evaluation/eval/eval_utils.py
 """
 import re
+import regex
 import multiprocessing
 from math import isclose
 from typing import Union
@@ -14,24 +17,36 @@ from sympy.parsing.latex import parse_latex
 from latex2sympy2 import latex2sympy
 
 
-
-def is_digit(s):
+def parse_digits(num):
+    num = regex.sub(',', '', str(num))
     try:
-        float(str(s).replace(",", ""))
-        return True
-    except ValueError:
-        return False
+        return float(num)
+    except:
+        if num.endswith('%'):
+            num = num[:-1]
+            if num.endswith('\\'):
+                num = num[:-1]
+            try:
+                return float(num) / 100
+            except:
+                pass
+    return None
 
-def str_to_pmatrix(input_str):  
-    input_str = input_str.strip()  
-    matrix_str = re.findall(r'\{.*,.*\}', input_str)  
-    pmatrix_list = []  
-  
-    for m in matrix_str:  
+def is_digit(num):
+    # paired with parse_digits
+    return parse_digits(num) is not None
+
+
+def str_to_pmatrix(input_str):
+    input_str = input_str.strip()
+    matrix_str = re.findall(r'\{.*,.*\}', input_str)
+    pmatrix_list = []
+
+    for m in matrix_str:
         m = m.strip('{}')
-        pmatrix = r'\begin{pmatrix}' + m.replace(',', '\\') + r'\end{pmatrix}'  
-        pmatrix_list.append(pmatrix)  
-  
+        pmatrix = r'\begin{pmatrix}' + m.replace(',', '\\') + r'\end{pmatrix}'
+        pmatrix_list.append(pmatrix)
+
     return ', '.join(pmatrix_list)
 
 
@@ -46,10 +61,14 @@ def math_equal(prediction: Union[bool, float, str],
     1. numerical equal: both can convert to float and are equal
     2. symbolic equal: both can convert to sympy expression and are equal
     """
+    # print("Judge:", prediction, reference)
+    if str(prediction) == str(reference):
+        return True
+
     try: # 1. numerical equal
         if is_digit(prediction) and is_digit(reference):
-            prediction = float(str(prediction).replace(",", ""))
-            reference = float(str(reference).replace(",", ""))
+            prediction = parse_digits(prediction)
+            reference = parse_digits(reference)
             # number questions
             if include_percentage:
                 gt_result = [reference / 100, reference, reference * 100]
@@ -71,6 +90,7 @@ def math_equal(prediction: Union[bool, float, str],
 
     if not prediction and prediction not in [0, False]:
         return False
+    # print("try math_eval")
 
     # 2. symbolic equal
     reference = str(reference).strip()
@@ -93,14 +113,49 @@ def math_equal(prediction: Union[bool, float, str],
         return True
 
     ## [a, b] vs. [c, d], return a==c and b==d
-    if (prediction.startswith("[") and prediction.endswith("]")) and (reference.startswith("[") and reference.endswith("]")) or \
-        (prediction.startswith("(") and prediction.endswith(")")) and (reference.startswith("(") and reference.endswith(")")):
+    if regex.match(r'(\(|\[).+(\)|\])', prediction) is not None and regex.match(r'(\(|\[).+(\)|\])', reference) is not None:
         pred_parts = prediction[1:-1].split(",")
         ref_parts = reference[1:-1].split(",")
         if len(pred_parts) == len(ref_parts):
             if all([math_equal(pred_parts[i], ref_parts[i], include_percentage, is_close) for i in range(len(pred_parts))]):
                 return True
+    if (prediction.startswith("\\begin{pmatrix}") or prediction.startswith("\\begin{bmatrix}")) and (prediction.endswith("\\end{pmatrix}") or prediction.endswith("\\end{bmatrix}")) and \
+        (reference.startswith("\\begin{pmatrix}") or reference.startswith("\\begin{bmatrix}")) and (reference.endswith("\\end{pmatrix}") or reference.endswith("\\end{bmatrix}")):
+        pred_lines = [line.strip() for line in prediction[len("\\begin{pmatrix}"): -len("\\end{pmatrix}")].split("\\\\") if line.strip()]
+        ref_lines = [line.strip() for line in reference[len("\\begin{pmatrix}"): -len("\\end{pmatrix}")].split("\\\\") if line.strip()]
+        matched = True
+        if len(pred_lines) == len(ref_lines):
+            for pred_line, ref_line in zip(pred_lines, ref_lines):
+                pred_parts = pred_line.split("&")
+                ref_parts = ref_line.split("&")
+                if len(pred_parts) == len(ref_parts):
+                    if not all([math_equal(pred_parts[i], ref_parts[i], include_percentage, is_close) for i in range(len(pred_parts))]):
+                        matched = False
+                        break
+                else:
+                    matched = False
+                if not matched:
+                    break
+        else:
+            matched = False
+        if matched:
+            return True
 
+    if prediction.count('=') == 1 and reference.count('=') == 1:
+        pred = prediction.split('=')
+        pred = f"{pred[0].strip()} - ({pred[1].strip()})"
+        ref = reference.split('=')
+        ref = f"{ref[0].strip()} - ({ref[1].strip()})"
+        if symbolic_equal(pred, ref) or symbolic_equal(f"-({pred})", ref):
+            return True
+    elif prediction.count('=') == 1 and len(prediction.split('=')[0].strip()) <= 2 and '=' not in reference:
+        if math_equal(prediction.split('=')[1], reference, include_percentage, is_close):
+            return True
+    elif reference.count('=') == 1 and len(reference.split('=')[0].strip()) <= 2 and '=' not in prediction:
+        if math_equal(prediction, reference.split('=')[1], include_percentage, is_close):
+            return True
+
+    # print("try final")
     # symbolic equal with sympy
     if timeout:
         if call_with_timeout(symbolic_equal_process, prediction, reference):
@@ -119,21 +174,23 @@ def math_equal_process(param):
 def numeric_equal(prediction: float, reference: float):
     # Note that relative tolerance has significant impact 
     # on the result of the synthesized GSM-Hard dataset
-    if reference.is_integer():
-        return isclose(reference, round(prediction), abs_tol=1e-4)
-    else:
-        # round prediction to refence precision
-        prediction = round(prediction, len(str(reference).split(".")[-1]))
-        return isclose(reference, prediction, rel_tol=1e-6)
+    # if reference.is_integer():
+    #     return isclose(reference, round(prediction), abs_tol=1e-4)
+    # else:
+        # prediction = round(prediction, len(str(reference).split(".")[-1]))
+    return isclose(reference, prediction, rel_tol=1e-4)
 
 
 def symbolic_equal(a, b):
     def _parse(s):
         for f in [parse_latex, parse_expr, latex2sympy]:
             try:
-                return f(s)
+                return f(s.replace("\\\\", "\\"))
             except:
-                pass
+                try:
+                    return f(s)
+                except:
+                    pass
         return s
     a = _parse(a)
     b = _parse(b)
@@ -145,6 +202,7 @@ def symbolic_equal(a, b):
     except:
         pass
 
+    # print("try simplify")
     # simplify equal
     try:
         if a.equals(b) or simplify(a-b) == 0:
@@ -152,6 +210,7 @@ def symbolic_equal(a, b):
     except:
         pass
 
+    # print("try equation")
     # equation equal
     try:
         if (abs(a.lhs - a.rhs)).equals(abs(b.lhs - b.rhs)):
@@ -179,23 +238,23 @@ def symbolic_equal(a, b):
     return False
 
 
-def symbolic_equal_process(a, b, output_queue):  
+def symbolic_equal_process(a, b, output_queue):
     result = symbolic_equal(a, b)
-    output_queue.put(result)  
+    output_queue.put(result)
 
 
-def call_with_timeout(func, *args, timeout=1, **kwargs):  
-    output_queue = multiprocessing.Queue()  
-    process_args = args + (output_queue,)  
-    process = multiprocessing.Process(target=func, args=process_args, kwargs=kwargs)  
-    process.start()  
-    process.join(timeout)  
-  
-    if process.is_alive():  
-        process.terminate()  
-        process.join()  
-        return False  
-  
+def call_with_timeout(func, *args, timeout=1, **kwargs):
+    output_queue = multiprocessing.Queue()
+    process_args = args + (output_queue,)
+    process = multiprocessing.Process(target=func, args=process_args, kwargs=kwargs)
+    process.start()
+    process.join(timeout)
+
+    if process.is_alive():
+        process.terminate()
+        process.join()
+        return False
+
     return output_queue.get()
 
 
@@ -221,8 +280,20 @@ def _test_math_equal():
     # pred = '\\begin{pmatrix}0.290243531202435\\\\0.196008371385084\\\\-0.186381278538813\\end{pmatrix}'
     # gt = '(\\begin{pmatrix}0.29\\\\0.196\\\\-0.186\\\\\\end{pmatrix})'
 
-    pred = '\\frac{\\sqrt{\\sqrt{11}+\\sqrt{194}}}{2\\sqrt{33}+15}'
-    gt = '\\frac{\\sqrt{\\sqrt{11}+\\sqrt{194}}}{15+2\\sqrt{33}}'
+    # pred = '\\frac{\\sqrt{\\sqrt{11}+\\sqrt{194}}}{2\\sqrt{33}+15}'
+    # gt = '\\frac{\\sqrt{\\sqrt{11}+\\sqrt{194}}}{15+2\\sqrt{33}}'
+
+    # pred = '(+5)(b+2)'
+    # gt = '(a+5)(b+2)'
+
+    # pred = '\\frac{1+\\sqrt{5}}{2}'
+    # gt = '2'
+
+    # pred = '\\frac{34}{16}+\\frac{\\sqrt{1358}}{16}', gt = '4'
+    # pred = '1', gt = '1\\\\sqrt{19}'
+
+    pred = '(0.6,2.6667]'
+    gt = '(\\frac{3}{5},\\frac{8}{3}]'
 
     print(math_equal(pred, gt, timeout=True))
 

@@ -52,6 +52,8 @@ def load_prompt(data_name, prompt_type):
         data_name = "gsm8k"
     if data_name in ['math-oai', "hungarian_exam"]:
         data_name = "math"
+    if data_name in ['sat_math']:
+        data_name = "mmlu_stem"
     if prompt_type in ['platypus_fs']:
         prompt_type = "cot"
     if prompt_type in ['tool-integrated']:
@@ -63,7 +65,7 @@ def load_prompt(data_name, prompt_type):
             prompt_path = "./prompts/{}.md".format(prompt_type)
         if os.path.exists(prompt_path):
             with open(prompt_path, 'r', encoding='utf-8') as fp:
-                prompt = fp.read().strip() + "\n\n"
+                prompt = fp.read().strip() + "\n\n\n"
         else:
             print(f"Error: prompt file {prompt_path} not found")
             prompt = ""
@@ -75,7 +77,10 @@ def construct_prompt(example, data_name, args):
     demo_prompt = load_prompt(data_name, args.prompt_type)
     # Base models
     if args.prompt_type in ["direct", "cot"]:
-        context = f"Question: {example['question']}\nAnswer:"
+        if data_name in ["minerva_math", "math", "math-oai", "mmlu_stem", "sat_math", "mathqa", "hungarian_exam"]:
+            context = f"Problem:\n{example['question']}\nSolution:"
+        else:
+            context = f"Question: {example['question']}\nAnswer:"
         full_prompt = demo_prompt + context
     elif args.prompt_type == "pal":
         context = f"Question: {example['question']}"

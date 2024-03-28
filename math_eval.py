@@ -53,8 +53,7 @@ def prepare_data(data_name, args):
 
     # shuffle
     if args.shuffle:
-        random.seed(datetime.now().timestamp())
-        random.shuffle(examples)
+        random.shuffle(examples, seed=datetime.now().timestamp())
 
     # select start and end
     examples = examples[args.start:len(examples) if args.end == -1 else args.end]
@@ -148,7 +147,7 @@ def main(llm, tokenizer, data_name, args):
             'ans_type', 'answer_type', 'dataset', 'subfield', 'filed', 'theorem', 'answer']:
             if key in example:
                 sample[key] = example[key]
-        samples.append(sample)  
+        samples.append(sample)
 
 
     # repeat n times
@@ -163,11 +162,12 @@ def main(llm, tokenizer, data_name, args):
     stop_words = ["</s>"]
 
     if args.prompt_type in ['cot']:
-        stop_words.append("\n\nQuestion:")
+        stop_words.extend(["\n\nQuestion:", "\n\nProblem:"])
     if args.prompt_type in ['pal', 'tool-integrated']:
-        stop_words.append("\n\n---", "```output")
+        stop_words.extend(["\n\n---", "```output"])
     elif args.prompt_type in ['wizard_zs', 'platypus_fs']:
         stop_words.extend(["Instruction", "Response"])
+    print("Stop words:", stop_words)
 
     # start inference
     # measure time use
@@ -253,7 +253,7 @@ def main(llm, tokenizer, data_name, args):
         codes.append(code)
 
     # extract preds
-    results = [run_execute(executor, code, args.prompt_type) for code in codes]
+    results = [run_execute(executor, code, args.prompt_type, data_name) for code in codes]
     time_use = time.time() - start_time
 
     # put results back to examples

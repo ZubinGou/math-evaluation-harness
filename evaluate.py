@@ -41,7 +41,7 @@ def evaluate(data_name, prompt_type, samples: list=None, file_path: str=None, ma
             sample['pred'] = []
             sample['report'] = []
             for code in sample['code']:
-                pred, report = run_execute(executor, code, prompt_type, execute=True)
+                pred, report = run_execute(executor, code, prompt_type, data_name, execute=True)
                 sample['pred'].append(pred)
                 sample['report'].append(report)
 

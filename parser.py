@@ -1,4 +1,5 @@
 import re
+import regex
 import sympy
 from typing import TypeVar, Iterable, List, Union, Any, Dict
 from word2number import w2n
@@ -214,8 +215,27 @@ def strip_string(string):
 
     return string
 
-def extract_answer(pred_str):
-    if 'boxed' in pred_str:
+
+def extract_multi_choice_answer(pred_str):
+    # TODO: SFT models
+    if 'Problem:' in pred_str:
+        pred_str = pred_str.split("Problem:", 1)[0]
+    pred_str = pred_str.replace("choice is", "answer is")
+    patt = regex.search(r"answer is \(?(?P<ans>[abcde])\)?", pred_str.lower())
+    if patt is not None:
+        return patt.group('ans').upper()
+    return 'placeholder'
+
+
+def extract_answer(pred_str, data_name):
+    if data_name in ["mmlu_stem", "sat_math", "mathqa"]:
+        return extract_multi_choice_answer(pred_str)
+
+    if 'final answer is $' in pred_str and '$. I hope' in pred_str:
+        # minerva_math
+        tmp = pred_str.split('final answer is $', 1)[1]
+        pred = tmp.split('$. I hope', 1)[0].strip()
+    elif 'boxed' in pred_str:
         ans = pred_str.split('boxed')[-1]
         if len(ans) == 0:
             return ""
@@ -234,7 +254,7 @@ def extract_answer(pred_str):
                     a += c
         else:
             a = ans.split('$')[0].strip()
-        pred=a
+        pred = a
     elif ('he answer is' in pred_str):
         pred = pred_str.split('he answer is')[-1].strip()
     elif ('final answer is' in pred_str):
@@ -265,18 +285,19 @@ def extract_answer(pred_str):
 def parse_ground_truth(example: Dict[str, Any], data_name):
     if 'gt_cot' in example and 'gt' in example:
         if data_name in ["math", "math-oai", "ocw", "amps", "hungarian_exam"]:
-            gt_ans = extract_answer(example['gt_cot'])
+            gt_ans = extract_answer(example['gt_cot'], data_name)
         else:
             gt_ans = strip_string(example['gt'])
         return example['gt_cot'], gt_ans
 
     # parse ground truth
-    if data_name in ["math", "math-oai", "ocw", "amps", "hungarian_exam"]:
+    if data_name in ["math", "math-oai", "minerva_math", "ocw", "amps", "hungarian_exam"]:
         gt_cot = example['solution']
-        gt_ans = extract_answer(gt_cot)
+        gt_ans = extract_answer(gt_cot, data_name)
     elif data_name in ['mathqa']:
-        gt_cot = example['solution']
-        gt_ans = example['answer']
+        gt_cot = example['rationale']
+        gt_ans = example['correct'].upper()
+        assert gt_ans in ['A', 'B', 'C', 'D', 'E']
     elif data_name == "gsm8k":
         gt_cot, gt_ans = example['answer'].split("####")
     elif data_name == "gsm-hard":
@@ -304,6 +325,11 @@ def parse_ground_truth(example: Dict[str, Any], data_name):
         gt_cot, gt_ans = None, example['target']
     elif data_name == "theorem-qa":
         gt_cot, gt_ans = None, example['answer']
+    elif data_name == "mmlu_stem":
+        abcd = 'ABCD'
+        gt_cot, gt_ans = None, abcd[example['answer']]
+    elif data_name == "sat_math":
+        gt_cot, gt_ans = None, example['Answer']
     else:
         raise NotImplementedError(f"`{data_name}`")
     # post process
@@ -329,6 +355,34 @@ def parse_question(example, data_name):
             question += f' Please select from the following options: {example["choices"]}'
     elif data_name == "theorem-qa":
         question = f"{example['question'].strip()}\nTheorem: {example['theorem_def'].strip()}"
+    elif data_name == "mmlu_stem":
+        options = example['choices']
+        assert len(options) == 4
+        for i, (label, option) in enumerate(zip('ABCD', options)):
+            options[i] = f"({label}) {str(option).strip()}"
+        options = ", ".join(options)
+        question = f"{example['question'].strip()}\nWhat of the following is the right choice? Explain your answer.\n{options}"
+    elif data_name == "sat_math":
+        options = example['options'].strip()
+        assert 'A' == options[0]
+        options = '(' + options
+        for ch in 'BCD':
+            if f' {ch}) ' in options:
+                options = regex.sub(f' {ch}\) ', f" ({ch}) ", options)
+        question = f"{example['question'].strip()}\nWhat of the following is the right choice? Explain your answer.\n{options.strip()}"
+    elif data_name == "mathqa":
+        example['problem'] = example['problem'][0].upper() + example['problem'][1:]
+        options = example['options'].strip()
+        if options[0] == '[':
+            options = eval(options)
+            options = ", ".join(options)
+        assert 'a' == options[0], options
+        for ch in 'abcde':
+            if f'{ch} ) ' in options:
+                options = regex.sub(f'{ch} \) {ch} \) ', f'{ch} ) ', options)
+                options = regex.sub(f'{ch} \) ', f"({ch.upper()}) ", options)
+        options = options.replace(' , ', ', ')
+        question = f"{example['problem'].strip()}\nWhat of the following is the right choice? Explain your answer.\n{options.strip()}"
     else:
         for key in ['question', 'problem', 'Question', 'input']:
             if key in example:
@@ -345,7 +399,7 @@ def parse_question(example, data_name):
     return question.strip()
 
 
-def run_execute(executor, result, prompt_type, execute=False):
+def run_execute(executor, result, prompt_type, data_name, execute=False):
     if not result or result == 'error':
         return None, None
     report = None
@@ -356,7 +410,7 @@ def run_execute(executor, result, prompt_type, execute=False):
         code = extract_program(result)
         prediction, report = executor.apply(code)
     else:
-        prediction = extract_answer(result)
+        prediction = extract_answer(result, data_name)
 
     prediction = strip_string(prediction)
     return prediction, report
@@ -373,7 +427,7 @@ def _test_extract_answer():
 \\end{array}
 \\right)}$.
 """
-    print(extract_answer(text))
+    print(extract_answer(text, "math"))
     # should output a dict
 
 

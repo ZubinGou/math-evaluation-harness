@@ -10,14 +10,14 @@ A unified, precise, and extensible toolkit to benchmark LLMs on various mathemat
 
 - **Models**: Seamless compatibility with models from Hugging Face 🤗 and [vLLM](https://github.com/vllm-project/vllm).
 
-- **Datasets**: An extensive array of datasets including `math`, `math-oai`, `gsm8k`, `gsm-hard`, `svamp`, `asdiv`, `mawps`, `tabmwp`, `finqa`, `theorem-qa`, `bbh`, `hungarian_exam`.
+- **Datasets**: An extensive array of datasets including `minerva_math`, `math`, `math-oai`, `gsm8k`, `gsm-hard`, `svamp`, `asdiv`, `mawps`, `tabmwp`, `finqa`, `theorem-qa`, `bbh`, `mmlu_stem`, `sat_math`, `mathqa`, `hungarian_exam`.
 
 - **Prompts**: Diverse prompting paradigms, from Direct to Chain-of-Thought (CoT), Program-of-Thought (PoT/PAL), and [Tool-Integrated Reasoning (ToRA)](https://github.com/microsoft/ToRA).
 
 
 - **Coming**:
 
-    - [ ] Add support to MIT-OCW, MMLU-STEM, MMLU-MATH
+    - [x] Add support to sat_math, mmlu_stem, mathqa, minerva_math
 
 
 ## 🚀 Getting Started
@@ -101,4 +101,5 @@ This project is still under active development. We welcome any contributions, in
 
 - https://github.com/microsoft/ToRA
 - https://github.com/openai/prm800k
-
+- https://github.com/wellecks/lm-evaluation-harness
+- https://github.com/deepseek-ai/DeepSeek-Math

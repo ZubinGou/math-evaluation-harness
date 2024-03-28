@@ -4,7 +4,10 @@ import random
 from datasets import load_dataset, Dataset, concatenate_datasets
 from utils import load_jsonl, lower_keys
 
+
 def load_data(data_name, split, data_dir='./data'):
+    if data_name in ['minerva_math']:
+        data_name = 'math-oai'
     data_file = f"{data_dir}/{data_name}/{split}.jsonl"
     if os.path.exists(data_file):
         examples = list(load_jsonl(data_file))
@@ -43,6 +46,20 @@ def load_data(data_name, split, data_dir='./data'):
                 examples.extend(data_dict.values())
             dataset = Dataset.from_list(examples)
             dataset = dataset.select(random.sample(range(len(dataset)), 1000))
+        elif data_name == "mathqa":
+            dataset = load_dataset("math_qa", split=split)
+            dataset = dataset.rename_column("category", "type")
+            dataset = dataset.select(random.sample(range(len(dataset)), 1000))
+        elif data_name == "mmlu_stem":
+            dataset = load_dataset("hails/mmlu_no_train", 'all', split='test')
+            # only keep stem subjects
+            stem_subjects = ['abstract_algebra', 'astronomy', 'college_biology', 'college_chemistry',
+                'college_computer_science', 'college_mathematics', 'college_physics', 'computer_security',
+                'conceptual_physics', 'electrical_engineering', 'elementary_mathematics', 'high_school_biology',
+                'high_school_chemistry', 'high_school_computer_science', 'high_school_mathematics',
+                'high_school_physics', 'high_school_statistics', 'machine_learning']
+            dataset = dataset.rename_column("subject", "type")
+            dataset = dataset.filter(lambda x: x['type'] in stem_subjects)
         elif data_name == "bbh":
             examples = []
             for data_name in ["reasoning_about_colored_objects", "penguins_in_a_table",\
@@ -71,3 +88,7 @@ def load_data(data_name, split, data_dir='./data'):
     # dedepulicate & sort
     examples = sorted(examples, key=lambda x: x['idx'])
     return examples
+
+
+if __name__ == "__main__":
+    examples = load_data("mmlu_stem", "test")

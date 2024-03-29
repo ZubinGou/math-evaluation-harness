@@ -33,6 +33,7 @@ def summarize_results(result_dir, data_names, split):
     pad = max([len(data_name) for data_name in data_list])
     print("\t".join(data_name.ljust(pad, " ") for data_name in data_list))
     print("\t".join([f"{result['acc']:.1f}".ljust(pad, " ") for result in results]))
+    print(" & ".join([f"{result['acc']:.1f}" for result in results]))
 
 
 if __name__ == "__main__":

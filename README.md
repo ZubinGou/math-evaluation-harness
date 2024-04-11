@@ -69,7 +69,7 @@ bash scripts/run_math_eval.sh
 
 > PROMPT_TYPE=cot
 
-| Model                                                         | $\boldsymbol{\theta}$ | Data   | Uniq. Token | Train Token | GSM8K | MATH* | SVAMP | ASDiv | MAWPS | TAB   | MQA  | MMLU STEM | SAT | AVG  |
+| Model                                                         | size | Data   | Uniq. Token | Train Token | GSM8K | MATH* | SVAMP | ASDiv | MAWPS | TAB   | MQA  | MMLU STEM | SAT | AVG  |
 |---------------------------------------------------------------|--------------------------|--------|--------------|------------|-------|----------------|-------|-------|-------|-------|------|-----------|----------------|------|
 | **1-2B Base Models**                                          |                          |        |              |            |       |                |       |       |       |       |      |           |                |      |
 | [Tinyllama](https://huggingface.co/Tinyllama/Tinyllama-1.1B-intermediate-step-1431k-3T) | 1.1B                     | -      | -            | -          | 2.9   | 3.2            | 11.0  | 18.1  | 20.4  | 12.5  | 14.6 | 16.1      | 21.9           | 13.4 |
@@ -79,7 +79,7 @@ bash scripts/run_math_eval.sh
 | DeepSeekLLM                                                   | 1.3B                     | OWM    | 14B          | 150B       | 11.5  | 8.9            | -     | -     | -     | -     | -    | 29.6      | 31.3           | -    |
 | DeepSeekMath                                                  | 1.3B                     | -      | 120B         | 150B       | 23.8  | 13.6       | -     | -     | -     | -     | -    | 33.1  | **56.3**      | -    |
 | [Rho-Math](https://huggingface.co/microsoft/rho-math-1b-v0.1)                                                 | 1.1B                     | OWM    | 14B          | **30B**    | **36.2** | **15.6**       | **52.1** | **67.0** | **83.9** | 29.0 | **32.5** | 23.3  | 28.1      | **40.9** |
-| **$\ge$ 7B Base Models**                                      |                          |        |              |            |       |                |       |       |       |       |      |           |                |      |
+| **>= 7B Base Models**                                      |                          |        |              |            |       |                |       |       |       |       |      |           |                |      |
 | [LLaMA-2](https://huggingface.co/meta-llama/Llama-2-7b-hf)    | 7B                       |        | -            | -          | 14.0  | 3.6            | 39.5  | 51.7  | 63.5  | 30.9  | 12.4 | 32.7      | 34.4           | 31.4 |
 | [Mistral](https://huggingface.co/mistralai/Mistral-7B-v0.1)  | 7B                       |        | -            | -          | 41.2  | 11.6           | 64.7  | 68.5  | 87.5  | 52.9  | 33.0 | 49.5      | 59.4           | 52.0 |
 | Minerva                                                       | 8B                       | -      | 39B          | 164B       | 16.2  | 14.1           | -     | -     | -     | -     | -    | 35.6      | -              | -    |
@@ -93,8 +93,8 @@ bash scripts/run_math_eval.sh
 | [Rho-Math](https://huggingface.co/microsoft/rho-math-7b-v0.1)                                                 | 7B                       | OWM    | 14B          | **10.5B**  | **66.9** | 31.0       | **77.8** | 79.0 | 93.9 | 49.9 | 58.7 | 54.6  | **84.4**      | 66.2 |
 
 
-> - $^*$ We suggest utilizing the [OpenAI test subset](https://github.com/openai/prm800k) for evaluating MATH performance, since the original `MATH` test set has already been included in public training sets such as PRM800k. We use [minerva_math](/prompts/cot/minerva_math.md) prompt.
-> - Abbr: TAB=tabmwp, MQA = mathqa, SAT = sat_math
+> - *We suggest utilizing the [OpenAI test subset](https://github.com/openai/prm800k) for evaluating MATH performance, since the original `MATH` test set has already been included in public training sets such as PRM800k. We use [minerva_math](/prompts/cot/minerva_math.md) prompt.
+> - abbreviations: TAB=tabmwp, MQA = mathqa, SAT = sat_math
 
 
 ### SFT Models (Code Interpreter)

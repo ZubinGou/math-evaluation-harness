@@ -60,8 +60,9 @@ pip install -r requirements.txt
 2. Run the script:
 
 ```bash  
-bash scripts/run_math_eval.sh
+bash scripts/run_eval.sh $PROMPT_TYPE $MODEL_NAME_OR_PATH
 ```
+
 
 ## 📊 Results
 
@@ -69,7 +70,7 @@ bash scripts/run_math_eval.sh
 
 > PROMPT_TYPE=cot
 
-| Model                                                         | size | Data   | Uniq. Token | Train Token | GSM8K | MATH* | SVAMP | ASDiv | MAWPS | TAB   | MQA  | MMLU STEM | SAT | AVG  |
+| Model                                                         | Size | Data   | Uniq. Token | Train Token | GSM8K | MATH* | SVAMP | ASDiv | MAWPS | TAB   | MQA  | MMLU STEM | SAT | AVG  |
 |---------------------------------------------------------------|--------------------------|--------|--------------|------------|-------|----------------|-------|-------|-------|-------|------|-----------|----------------|------|
 | **1-2B Base Models**                                          |                          |        |              |            |       |                |       |       |       |       |      |           |                |      |
 | [Tinyllama](https://huggingface.co/Tinyllama/Tinyllama-1.1B-intermediate-step-1431k-3T) | 1.1B                     | -      | -            | -          | 2.9   | 3.2            | 11.0  | 18.1  | 20.4  | 12.5  | 14.6 | 16.1      | 21.9           | 13.4 |

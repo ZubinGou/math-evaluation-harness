@@ -23,12 +23,12 @@ SPLIT="test"
 NUM_TEST_SAMPLE=-1
 
 
-
+# single-gpu
 CUDA_VISIBLE_DEVICES=0 TOKENIZERS_PARALLELISM=false \
 python3 -u math_eval.py \
     --model_name_or_path ${MODEL_NAME_OR_PATH} \
-    --data_names ${DATA_NAMES} \
     --output_dir ${OUTPUT_DIR} \
+    --data_names ${DATA_NAMES} \
     --split ${SPLIT} \
     --prompt_type ${PROMPT_TYPE} \
     --num_test_sample ${NUM_TEST_SAMPLE} \
@@ -41,3 +41,17 @@ python3 -u math_eval.py \
     --use_vllm \
     --save_outputs \
     # --overwrite \
+
+
+# multi-gpu
+# python3 scripts/run_eval_multi_gpus.py \
+#     --model_name_or_path $MODEL_NAME_OR_PATH \
+#     --output_dir $OUTPUT_DIR \
+#     --data_names ${DATA_NAMES} \
+#     --prompt_type "cot" \
+#     --temperature 0 \
+#     --use_vllm \
+#     --save_outputs \
+#     --available_gpus 0,1,2,3,4,5,6,7 \
+#     --gpus_per_model 1 \
+#     --overwrite

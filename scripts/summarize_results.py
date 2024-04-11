@@ -6,7 +6,7 @@ import argparse
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--result_dir", type=str)
-    parser.add_argument("--data_names", type=str, default="gsm8k,math-oai,svamp,asdiv,mawps")
+    parser.add_argument("--data_names", type=str, default="gsm8k,minerva_math,svamp,asdiv,mawps")
     parser.add_argument("--split", type=str, default="test")
     args = parser.parse_args()
     summarize_results(args.result_dir, args.data_names, args.split)

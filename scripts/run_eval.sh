@@ -18,7 +18,7 @@ MODEL_NAME_OR_PATH=$2
 
 
 OUTPUT_DIR=${MODEL_NAME_OR_PATH}/math_eval
-DATA_NAME="gsm8k,math-oai,svamp,asdiv,mawps"
+DATA_NAMES="gsm8k,minerva_math,svamp,asdiv,mawps"
 SPLIT="test"
 NUM_TEST_SAMPLE=-1
 
@@ -27,7 +27,7 @@ NUM_TEST_SAMPLE=-1
 CUDA_VISIBLE_DEVICES=0 TOKENIZERS_PARALLELISM=false \
 python3 -u math_eval.py \
     --model_name_or_path ${MODEL_NAME_OR_PATH} \
-    --data_name ${DATA_NAME} \
+    --data_names ${DATA_NAMES} \
     --output_dir ${OUTPUT_DIR} \
     --split ${SPLIT} \
     --prompt_type ${PROMPT_TYPE} \

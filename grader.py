@@ -173,7 +173,7 @@ def math_equal_process(param):
 
 def numeric_equal(prediction: float, reference: float):
     # Note that relative tolerance has significant impact 
-    # on the result of the synthesized GSM-Hard dataset
+    # on the result of the synthesized gsm_hard dataset
     # if reference.is_integer():
     #     return isclose(reference, round(prediction), abs_tol=1e-4)
     # else:

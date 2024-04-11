@@ -18,7 +18,8 @@ MODEL_NAME_OR_PATH=$2
 
 
 OUTPUT_DIR=${MODEL_NAME_OR_PATH}/math_eval
-DATA_NAMES="gsm8k,minerva_math,svamp,asdiv,mawps"
+DATA_NAMES="gsm8k,minerva_math"
+# DATA_NAMES="gsm8k,minerva_math,svamp,asdiv,mawps,tabmwp,mathqa,mmlu_stem,sat_math"
 SPLIT="test"
 NUM_TEST_SAMPLE=-1
 

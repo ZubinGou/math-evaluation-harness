@@ -10,7 +10,7 @@ A unified, precise, and extensible toolkit to benchmark LLMs on various mathemat
 
 - **Models**: Seamless compatibility with models from Hugging Face 🤗 and [vLLM](https://github.com/vllm-project/vllm).
 
-- **Datasets**: An extensive array of datasets including `minerva_math`, `math`, `math-oai`, `gsm8k`, `gsm-hard`, `svamp`, `asdiv`, `mawps`, `tabmwp`, `finqa`, `theorem-qa`, `bbh`, `mmlu_stem`, `sat_math`, `mathqa`, `hungarian_exam`.
+- **Datasets**: An extensive array of datasets including `minerva_math`, `math`, `math_oai`, `gsm8k`, `gsm_hard`, `svamp`, `asdiv`, `mawps`, `tabmwp`, `finqa`, `theorem_qa`, `bbh`, `mmlu_stem`, `sat_math`, `mathqa`, `hungarian_exam`.
 
 - **Prompts**: Diverse prompting paradigms, from Direct to Chain-of-Thought (CoT), Program-of-Thought (PoT/PAL), and [Tool-Integrated Reasoning (ToRA)](https://github.com/microsoft/ToRA).
 
@@ -102,7 +102,7 @@ bash scripts/run_eval.sh $PROMPT_TYPE $MODEL_NAME_OR_PATH
 
 > PROMPT_TYPE=tora
 
-| Model            | Size | SFT Data | GSM8k | MATH | SVAMP | ASDiv | MAWPS | TAB | GSM-Hard | AVG  |
+| Model            | Size | SFT Data | GSM8k | MATH | SVAMP | ASDiv | MAWPS | TAB | gsm_hard | AVG  |
 |------------------|------|----------|-------|------|-------|-------|-------|-----|----------|------|
 | GPT4-early (PAL) | -    | -        | 94.2  | 51.8 | 94.8  | 92.6  | 97.7  | 95.9| 77.6     | 86.4 |
 | MAmmoTH          | 70B           | MI-260k            | 76.9           | 41.8           | 82.4           | -              | -              | -            | -              | -            |

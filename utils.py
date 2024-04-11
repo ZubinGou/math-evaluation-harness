@@ -48,9 +48,9 @@ def lower_keys(example):
 
 
 def load_prompt(data_name, prompt_type):
-    if data_name in ['gsm-hard', 'svamp', 'tabmwp', 'asdiv', 'mawps']:
+    if data_name in ['gsm_hard', 'svamp', 'tabmwp', 'asdiv', 'mawps']:
         data_name = "gsm8k"
-    if data_name in ['math-oai', "hungarian_exam"]:
+    if data_name in ['math_oai', "hungarian_exam"]:
         data_name = "math"
     if data_name in ['sat_math']:
         data_name = "mmlu_stem"
@@ -74,20 +74,21 @@ def load_prompt(data_name, prompt_type):
     return prompt
 
 def construct_prompt(example, data_name, args):
-    demo_prompt = load_prompt(data_name, args.prompt_type)
     # Base models
-    if args.prompt_type in ["direct", "cot"]:
-        if data_name in ["minerva_math", "math", "math-oai", "mmlu_stem", "sat_math", "mathqa", "hungarian_exam"]:
-            context = f"Problem:\n{example['question']}\nSolution:"
-        else:
-            context = f"Question: {example['question']}\nAnswer:"
-        full_prompt = demo_prompt + context
-    elif args.prompt_type == "pal":
-        context = f"Question: {example['question']}"
-        full_prompt = demo_prompt + context
-    elif args.prompt_type in ['tool-integreted']:
-        context = f"Question: {example['question']}\n\nSolution:"
-        full_prompt = demo_prompt + context
+    if args.prompt_type in ["direct", "cot", "pal", "tool-integrated"]:
+        demo_prompt = load_prompt(data_name, args.prompt_type)
+        if args.prompt_type in ["direct", "cot"]:
+            if data_name in ["minerva_math", "math", "math_oai", "mmlu_stem", "sat_math", "mathqa", "hungarian_exam"]:
+                context = f"Problem:\n{example['question']}\nSolution:"
+            else:
+                context = f"Question: {example['question']}\nAnswer:"
+            full_prompt = demo_prompt + context
+        elif args.prompt_type == "pal":
+            context = f"Question: {example['question']}"
+            full_prompt = demo_prompt + context
+        elif args.prompt_type in ['tool-integreted']:
+            context = f"Question: {example['question']}\n\nSolution:"
+            full_prompt = demo_prompt + context
 
     # SFT models
     elif args.prompt_type in ['self-instruct', 'tora']:
@@ -101,13 +102,6 @@ def construct_prompt(example, data_name, args):
             "### Instruction:\n{instruction}\n\n### Response: Let's think step by step."
         )
         full_prompt = full_prompt.format(instruction=example['question'])
-    elif args.prompt_type == "platypus_fs":
-        full_prompt = (
-            "Below is an instruction that describes a task. "
-            "Write a response that appropriately completes the request.\n\n"
-            "### Instruction:\n{instruction}\n\n### Response:\n"
-        )
-        full_prompt = full_prompt.format(instruction=demo_prompt + f"Question: {example['question']}\nAnswer:")
     elif args.prompt_type == "deepseek-math":
         full_prompt = (
             "User: {instruction}\nPlease reason step by step, "

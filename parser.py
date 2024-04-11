@@ -284,14 +284,14 @@ def extract_answer(pred_str, data_name):
 
 def parse_ground_truth(example: Dict[str, Any], data_name):
     if 'gt_cot' in example and 'gt' in example:
-        if data_name in ["math", "math-oai", "ocw", "amps", "hungarian_exam"]:
+        if data_name in ["math", "math_oai", "ocw", "amps", "hungarian_exam"]:
             gt_ans = extract_answer(example['gt_cot'], data_name)
         else:
             gt_ans = strip_string(example['gt'])
         return example['gt_cot'], gt_ans
 
     # parse ground truth
-    if data_name in ["math", "math-oai", "minerva_math", "ocw", "amps", "hungarian_exam"]:
+    if data_name in ["math", "math_oai", "minerva_math", "ocw", "amps", "hungarian_exam"]:
         gt_cot = example['solution']
         gt_ans = extract_answer(gt_cot, data_name)
     elif data_name in ['mathqa']:
@@ -300,7 +300,7 @@ def parse_ground_truth(example: Dict[str, Any], data_name):
         assert gt_ans in ['A', 'B', 'C', 'D', 'E']
     elif data_name == "gsm8k":
         gt_cot, gt_ans = example['answer'].split("####")
-    elif data_name == "gsm-hard":
+    elif data_name == "gsm_hard":
         gt_cot, gt_ans = example['code'], example['target']
     elif data_name == "svamp":
         gt_cot, gt_ans = example['Equation'], example['Answer']
@@ -323,7 +323,7 @@ def parse_ground_truth(example: Dict[str, Any], data_name):
                 gt_ans = float(gt_ans)
     elif data_name == "bbh":
         gt_cot, gt_ans = None, example['target']
-    elif data_name == "theorem-qa":
+    elif data_name == "theorem_qa":
         gt_cot, gt_ans = None, example['answer']
     elif data_name == "mmlu_stem":
         abcd = 'ABCD'
@@ -353,7 +353,7 @@ def parse_question(example, data_name):
         question += f'{example["table"]}\n{example["question"]}'
         if example['choices']:
             question += f' Please select from the following options: {example["choices"]}'
-    elif data_name == "theorem-qa":
+    elif data_name == "theorem_qa":
         question = f"{example['question'].strip()}\nTheorem: {example['theorem_def'].strip()}"
     elif data_name == "mmlu_stem":
         options = example['choices']

@@ -13,7 +13,7 @@ from summarize_results import summarize_results
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name_or_path", default="gpt-4", type=str)
-    parser.add_argument("--data_names", default="gsm8k,minerva_math,math,gsm-hard,svamp,tabmwp,asdiv,mawps", type=str)
+    parser.add_argument("--data_names", default="gsm8k,minerva_math,math,gsm_hard,svamp,tabmwp,asdiv,mawps", type=str)
     parser.add_argument("--output_dir", default="/mnt/project/tora/outputs", type=str)
     parser.add_argument("--prompt_type", default="tool-integrated", type=str, choices=["direct", "cot", "pal", "tool-integrated", "self-instruct", "self-instruct-boxed", "tora", "pal", "cot", "wizard_zs", "platypus_fs", "deepseek-math", "kpmath"])
     parser.add_argument("--split", default="test", type=str)

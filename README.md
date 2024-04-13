@@ -70,7 +70,7 @@ bash scripts/run_eval.sh $PROMPT_TYPE $MODEL_NAME_OR_PATH
 
 > PROMPT_TYPE=cot
 
-| Model                                                         | Size | Data   | Uniq. Token | Train Token | GSM8K | MATH* | SVAMP | ASDiv | MAWPS | TAB   | MQA  | MMLU STEM | SAT | AVG  |
+| Model                                                         | Size | Data   | Uniq. Token | Train Token | GSM8K | MATH[^1] | SVAMP | ASDiv | MAWPS | TAB[^2]   | MQA  | MMLU STEM | SAT | AVG  |
 |---------------------------------------------------------------|--------------------------|--------|--------------|------------|-------|----------------|-------|-------|-------|-------|------|-----------|----------------|------|
 | **1-2B Base Models**                                          |                          |        |              |            |       |                |       |       |       |       |      |           |                |      |
 | [Tinyllama](https://huggingface.co/Tinyllama/Tinyllama-1.1B-intermediate-step-1431k-3T) | 1.1B                     | -      | -            | -          | 2.9   | 3.2            | 11.0  | 18.1  | 20.4  | 12.5  | 14.6 | 16.1      | 21.9           | 13.4 |
@@ -94,15 +94,15 @@ bash scripts/run_eval.sh $PROMPT_TYPE $MODEL_NAME_OR_PATH
 | [Rho-Math](https://huggingface.co/microsoft/rho-math-7b-v0.1)                                                 | 7B                       | OWM    | 14B          | **10.5B**  | **66.9** | 31.0       | **77.8** | 79.0 | 93.9 | 49.9 | 58.7 | 54.6  | **84.4**      | 66.2 |
 
 
-> - *We suggest utilizing the [OpenAI test subset](https://github.com/openai/prm800k) for evaluating MATH performance, since the original `MATH` test set has already been included in public training sets such as PRM800k. We use [minerva_math](/prompts/cot/minerva_math.md) prompt.
-> - abbreviations: TAB=tabmwp, MQA = mathqa, SAT = sat_math
+[^1]: We suggest utilizing the [OpenAI test subset](https://github.com/openai/prm800k) for evaluating MATH performance, since the original `MATH` test set has already been included in public training sets such as PRM800k. We use [minerva_math](/prompts/cot/minerva_math.md) prompt.
+[^2]: abbreviations: TAB=tabmwp, MQA = mathqa, SAT = sat_math
 
 
 ### SFT Models (Code Interpreter)
 
 > PROMPT_TYPE=tora
 
-| Model            | Size | SFT Data | GSM8k | MATH | SVAMP | ASDiv | MAWPS | TAB | gsm_hard | AVG  |
+| Model            | Size | SFT Data | GSM8k | MATH | SVAMP | ASDiv | MAWPS | TAB | GSM-Hard | AVG  |
 |------------------|------|----------|-------|------|-------|-------|-------|-----|----------|------|
 | GPT4-early (PAL) | -    | -        | 94.2  | 51.8 | 94.8  | 92.6  | 97.7  | 95.9| 77.6     | 86.4 |
 | MAmmoTH          | 70B           | MI-260k            | 76.9           | 41.8           | 82.4           | -              | -              | -            | -              | -            |

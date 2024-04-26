@@ -54,7 +54,7 @@ if args.split_data_over_gpus:
     num_gpus = len(available_gpus)
     data_list = [data_list[0] for _ in range(num_gpus)]
     num_test_sample_per_gpu = args.num_test_sample // num_gpus
-    start_end_list = [(i * num_test_sample_per_gpu, (i+1) * num_test_sample_per_gpu) for i in range(num_gpus)]
+    start_end_list = [(i * num_test_sample_per_gpu, (i+1) * num_test_sample_per_gpu if i != (num_gpus - 1 ) else args.num_test_sample) for i in range(num_gpus)]
 
 
 gpu_idx = 0
